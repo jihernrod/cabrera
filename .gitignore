@@ -1,0 +1,4 @@
+venv/
+.idea/
+marketApi/__pycache__/
+yinterface/__pycache__/
