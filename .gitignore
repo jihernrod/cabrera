@@ -2,3 +2,6 @@ venv/
 .idea/
 marketApi/__pycache__/
 yinterface/__pycache__/
+configuration/__pycache__/
+service/__pycache__/
+utils/__pycache__/

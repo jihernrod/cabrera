@@ -72,6 +72,6 @@ def get_spot(ticker_info):
                                   columns= ["Date","Open","High","Low","Close","Volume","Dividends",
                                            "Stock Splits","avg_50", "avg_200", "avg_1000" ])
 
-        ticker_info_with_avg [ticker] =  ticker_new_df
+        value["hist_market_data"] =  ticker_new_df
 
-    return ticker_info_with_avg
+

@@ -1,16 +1,13 @@
-from yinterface import yInterface
-from marketApi import dividend, spots, stock_returns
 
-import pprint
 
-value = yInterface.get_ticker_info(list_tickers=["KO", "TEF.MC", "ENG.MC", "MAP.MC", "MSFT", "JNJ", "AWK", "CSCO"])
-dividend_csv = dividend.dividend(value)
+if __name__=="__main__":
+        import service.generateRawInfo as generateRawInfo
+        import configuration.config as config_interface
+        import yinterface.yInterface as md_interface
+        import marketApi.algoritms as algorithms_interface
+        import utils.dumper as dumper
 
-dividend_csv.to_csv("c:\\tmp\\dividend.csv")
-spots_df = spots.get_spot(value)
-spots_df = stock_returns.get_stock_return(spots_df)
-
-for k, v in spots_df.items():
-    v.to_csv("c:\\tmp\\%s_ticker.csv" % (k))
+        value = generateRawInfo.GenerateRawInfo(config_interface, md_interface, algorithms_interface).do()
+        dumper.dump(value, "d:\\tmp\\dumps")
 
 
