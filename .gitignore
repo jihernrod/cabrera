@@ -5,3 +5,5 @@ yinterface/__pycache__/
 configuration/__pycache__/
 service/__pycache__/
 utils/__pycache__/
+actions/__pycache__/
+server/__pycache__/
