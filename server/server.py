@@ -6,5 +6,10 @@ app = Flask(__name__)
 @app.route('/')
 def get_dashboard():
     import actions.getDashBoard as getDashBoardModule
-    return getDashBoardModule.GetDashBoardAction().do()
+    import adapters.getDashBoardMatrixAdapter as getDashBoardMatrixAdapter
+    return getDashBoardMatrixAdapter.GetDashBoardActionMatrixAdapter().adapt(
+                                                                        getDashBoardModule.GetDashBoardAction().do())
+
+
+
 

@@ -8,14 +8,12 @@ class GetDashBoardAction:
         import configuration.config as config_interface
         import yinterface.yInterface as md_interface
         import marketApi.algoritms as algorithms_interface
-        import utils.dumper as dumper
-        import json
+
 
         ret = {}
         stock_info = generateRawInfoModule.GenerateRawInfo(config_interface,
                                                       md_interface,
                                                       algorithms_interface).do()
-        dumper.dump(stock_info, "d:\\tmp\\dumps")
         for key, value in stock_info.items():
 
             historic_market_data = value["hist_market_data"].to_dict("records")[-1]

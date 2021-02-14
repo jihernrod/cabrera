@@ -7,3 +7,4 @@ service/__pycache__/
 utils/__pycache__/
 actions/__pycache__/
 server/__pycache__/
+adapters/__pycache__/
