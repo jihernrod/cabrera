@@ -15,7 +15,8 @@ class GetDashBoardActionMatrixAdapter:
                            Constants.TYPE_FLOAT,
                            Constants.TYPE_FLOAT,
                            Constants.TYPE_FLOAT,
-                           Constants.TYPE_FLOAT]
+                           Constants.TYPE_FLOAT,
+                            Constants.TYPE_FLOAT]
 
     def adapt(self, dashBoardActionObject):
 
