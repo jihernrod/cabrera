@@ -1,17 +1,17 @@
 
 class GetDashBoardAction:
-    def __init__(self): pass
+    def __init__(self, requestDashboardAddapter):
+        self._requestDashboardAddapter = requestDashboardAddapter
 
     def do(self):
 
         import service.generateRawInfo as generateRawInfoModule
-        import configuration.config as config_interface
         import yinterface.yInterface as md_interface
         import marketApi.algoritms as algorithms_interface
 
 
         ret = {}
-        stock_info = generateRawInfoModule.GenerateRawInfo(config_interface,
+        stock_info = generateRawInfoModule.GenerateRawInfo(self._requestDashboardAddapter,
                                                       md_interface,
                                                       algorithms_interface).do()
         for key, value in stock_info.items():
