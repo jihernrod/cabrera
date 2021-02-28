@@ -65,11 +65,11 @@ if __name__ == "__main__":
             "CashFlow_file_name"]
 
     for url, file in zip(urls, files_to_export):
-        download_fundamental_data(default_configuration.get(url),
-                                  default_configuration.get(file), output_adapter_functor=lambda x: adapter_annual_reports(x))
+       download_fundamental_data(default_configuration.get(url),
+                                 default_configuration.get(file), output_adapter_functor=lambda x: adapter_annual_reports(x))
 
     download_fundamental_data(default_configuration.get("Earnings_url"),
-                              default_configuration.get("Earnings_url"), output_adapter_functor=lambda x: adapter_annual_earnings(x))
+                              default_configuration.get("Earnings_file_name"), output_adapter_functor=lambda x: adapter_annual_earnings(x))
 
     download_fundamental_data(default_configuration.get("Fundamental_url"),
                               default_configuration.get("Fundamental_file_name"))
