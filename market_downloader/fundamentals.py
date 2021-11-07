@@ -21,12 +21,12 @@ def download_fundamental_data(fundatmental_url, fundamental_file_name, output_ad
     for stock in stock_list:
         print("Getting info [%s] of [%s]" % (fundatmental_url, stock))
         response = requests.get(
-                                 fundatmental_url % stock)
+                                 fundatmental_url % stock, verify=False)
         if output_adapter_functor:
             try:
                 list_stocks.extend(output_adapter_functor(response.json()))
             except NotReturnData as nrd:
-                print ("Err: "+ str(nrd))
+                print ("Err: %s %s %s"% ( stock, str(nrd), response.text ) )
         else:
             list_stocks.append(response.json())
         time.sleep(default_configuration.get("Download_Delay"))
