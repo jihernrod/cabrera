@@ -2,6 +2,20 @@ import yfinance as yf
 import pprint
 import os
 import pandas
+import json
+
+def addTicker(df, ticker):
+    if isinstance(df, pandas.DataFrame):
+        df["ticker"]= ticker
+    elif isinstance(df, pandas.Series):
+        df = df.to_frame()
+        df["ticker"] = ticker
+    elif isinstance(df, list):
+        df["ticker"].append(ticker)
+    elif isinstance(df, dict):
+        df = pandas.Series(df).to_frame().T
+        df["ticker"] = ticker
+    return df
 
 
 def get_ticker_info(list_tickers = [], period = "5y"):
@@ -12,74 +26,62 @@ def get_ticker_info(list_tickers = [], period = "5y"):
         ticker_info[ticker]={}
 
         # get stock info
-        ticker_info[ticker]["stock_info"] = msft.info
+        ticker_info[ticker]["stock_info"] = addTicker(msft.info, ticker)
 
         # get historical market data
         hist = msft.history(period=period)
-        ticker_info[ticker]["hist_market_data"] = hist
 
-        # show actions (dividends, splits)
-        ticker_info[ticker]["actions"] = msft.actions
+        ticker_info[ticker]["hist_market_data"] = addTicker(hist, ticker)
+        ticker_info[ticker]["actions"] = addTicker(msft.actions, ticker)
+        ticker_info[ticker]["dividends"] = addTicker(msft.dividends, ticker)
+        ticker_info[ticker]["splits"] = addTicker(msft.splits, ticker)
+        ticker_info[ticker]["financials"] = addTicker(msft.financials.T, ticker)
+        ticker_info[ticker]["quarterly_financials"] = addTicker(msft.quarterly_financials.T, ticker)
+        ticker_info[ticker]["major_holders"] = addTicker(msft.major_holders, ticker)
+        ticker_info[ticker]["institutional_holders"] = addTicker(msft.institutional_holders, ticker)
+        ticker_info[ticker]["balance_sheet"] = addTicker(msft.balance_sheet.T, ticker)
+        ticker_info[ticker]["quarterly_balance_sheet"] = addTicker(msft.quarterly_balance_sheet.T, ticker)
+        ticker_info[ticker]["cashflow"] = addTicker(msft.cashflow.T, ticker)
+        ticker_info[ticker]["quarterly_cashflow"] = addTicker(msft.quarterly_cashflow.T, ticker)
+        ticker_info[ticker]["earnings"] = addTicker(msft.earnings, ticker)
+        ticker_info[ticker]["quarterly_earnings"] = addTicker(msft.quarterly_earnings, ticker)
+        ticker_info[ticker]["sustainability"] = addTicker(msft.sustainability, ticker)
+        ticker_info[ticker]["recommendations"] = addTicker(msft.recommendations, ticker)
 
-        # show dividends
-        ticker_info[ticker]["dividends"] = msft.dividends
+        if msft.calendar is not None:
+            ticker_info[ticker]["calendar"] = addTicker(msft.calendar.T, ticker)
 
-        # show splits
-        ticker_info[ticker]["splits"] = msft.splits
-
-        # show financials
-        ticker_info[ticker]["financials"] = msft.financials
-        ticker_info[ticker]["quarterly_financials"] = msft.quarterly_financials
-
-        # show major holders
-        ticker_info[ticker]["major_holders"] = msft.major_holders
-
-        # show institutional holders
-        ticker_info[ticker]["institutional_holders"] = msft.institutional_holders
-
-        # show balance sheet
-        ticker_info[ticker]["balance_sheet"] = msft.balance_sheet
-        ticker_info[ticker]["quarterly_balance_sheet"] = msft.quarterly_balance_sheet
-
-        # show cashflow
-        ticker_info[ticker]["cashflow"] = msft.cashflow
-        ticker_info[ticker]["quarterly_cashflow"] = msft.quarterly_cashflow
-
-        # show earnings
-        ticker_info[ticker]["earnings"] = msft.earnings
-        ticker_info[ticker]["quarterly_earnings"] = msft.quarterly_earnings
-
-        # show sustainability
-        ticker_info[ticker]["sustainability"] = msft.sustainability
-
-        # show analysts recommendations
-        ticker_info[ticker]["recommendations"] = msft.recommendations
-
-        # show next event (earnings, etc)
-        ticker_info[ticker]["calendar"] = msft.calendar
-
-        # show ISIN code - *experimental*
-        # ISIN = International Securities Identification Number
-        ticker_info[ticker]["isin"] = msft.isin
+        ticker_info[ticker]["isin"] = addTicker(msft.isin, ticker)
     return ticker_info
 
 
-
+import os
 def dump_yfinanze(list_tickers, path):
+
+    dataframe_by_key = {}
+
     for ticker, value in list_tickers.items():
         new_dict = {}
         for key, factor in  value.items():
             if isinstance(factor, pandas.DataFrame) :
-                new_dict[key] = factor.to_dict('records')
+                if not key in dataframe_by_key:
+                    dataframe_by_key[key] = factor
+                else:
+                    dataframe_by_key[key] = dataframe_by_key[key].append(factor)
+
             elif isinstance(factor, pandas.Series):
-                new_dict[key] = factor.to_dict()
+                new_dict[key] = json.loads( factor.to_json(orient="columns", date_format='iso') )
             else:
                 new_dict[key]= factor
         with open(os.path.join(path, ticker+".pprint"), 'w') as f:
             pprint.pprint(new_dict, f)
 
+    for key , df in dataframe_by_key.items():
+        dataframe_by_key[key].to_csv(os.path.join("d:\\tmp\\dumps", key), date_format='%Y-%m-%d', index_label="index")
+
+
 if __name__=="__main__":
-    dump_yfinanze(get_ticker_info(['MAP.MC']), "d:\\tmp\\dumps")
+    dump_yfinanze(get_ticker_info(["REE.MC", "ENG.MC", "MAP.MC"]), "d:\\tmp\\dumps")
 
 
 
